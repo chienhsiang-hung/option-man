@@ -30,12 +30,6 @@ html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif;}
   <div class="w3-bar w3-theme w3-top w3-left-align w3-large">
     <a class="w3-bar-item w3-button w3-right w3-hide-large w3-hover-white w3-large w3-theme-l1" href="javascript:void(0)" onclick="w3_open()"><i class="fa fa-bars"></i></a>
     <a href="#" class="w3-bar-item w3-button w3-theme-l1">Logo</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-hover-white">About</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-hover-white">Values</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-hover-white">News</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-hover-white">Contact</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-hide-medium w3-hover-white">Clients</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-hide-medium w3-hover-white">Partners</a>
   </div>
 </div>
 
@@ -59,24 +53,32 @@ html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif;}
 
   <div class="w3-row w3-padding-64">
     <div class="w3-twothird w3-container">
-      <h1 class="w3-text-teal">Base Case Price</h1>
+      <h1 class="w3-text-teal">BS Model and Greek</h1>
       <table>
+      <thead>
+        <tr>
+            <td colspan="2"><h2>Base Case Price</h2></td>
+        </tr>
+      </thead>
       <tbody>
         <tr>
-            <td>Underlying Price</td><td><input type="number"></td>
+            <td>Underlying Price</td><td><input type="number" id="S" value=100 oninput="bs_Call_prc()"></td>
         </tr>
         <tr>
-            <td>Exercise Price</td><td><input type="number"></td>
+            <td>Exercise Price</td><td><input type="number" id="X" value=100 onchange="bs_Call_prc()"></td>
         </tr>
         <tr>
-            <td>Time Until Expiration</td><td><input type="number"></td>
+            <td>Time Until Expiration</td><td><input type="number" id="T" value=30 onchange="bs_Call_prc()"></td>
         </tr>
         <tr>
-            <td>Volatility</td><td><input type="number"> %</td>
+            <td>Volatility</td><td><input type="number" id="sigma" value=30 onchange="bs_Call_prc()"> %</td>
         </tr>
         <tr>
-            <td>Interest Rate</td><td><input type="number"> %</td>
+            <td>Interest Rate</td><td><input type="number" id="Rate" value=5 onchange="bs_Call_prc()"> %</td>
         </tr>
+        <tr>
+            <td>Call</td><td><input type="number" disabled></td>
+        </tr>     
       </tbody>
       </table>
 
@@ -111,18 +113,6 @@ html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif;}
     <div class="w3-third w3-container">
       <p class="w3-border w3-padding-large w3-padding-32 w3-center">AD</p>
       <p class="w3-border w3-padding-large w3-padding-64 w3-center">AD</p>
-    </div>
-  </div>
-
-  <!-- Pagination -->
-  <div class="w3-center w3-padding-32">
-    <div class="w3-bar">
-      <a class="w3-button w3-black" href="#">1</a>
-      <a class="w3-button w3-hover-black" href="#">2</a>
-      <a class="w3-button w3-hover-black" href="#">3</a>
-      <a class="w3-button w3-hover-black" href="#">4</a>
-      <a class="w3-button w3-hover-black" href="#">5</a>
-      <a class="w3-button w3-hover-black" href="#">»</a>
     </div>
   </div>
 
@@ -161,6 +151,34 @@ function w3_open() {
 function w3_close() {
   mySidebar.style.display = "none";
   overlayBg.style.display = "none";
+}
+</script>
+
+<script>
+function bs_d1(S, X, sigma, T, Rate) {
+    if (T > 0) {
+        return (Math.log(S / X) + (Rate + 0.5 * sigma ^ 2) * T) / (sigma * T ^ 0.5);
+    } else {
+        if (S >= X) {
+            return 999999;
+        } else {
+            return -999999;   
+        }
+    }
+}
+
+function bs_d2(S, X, sigma, T, Rate) {
+    return bs_d1(S, X, sigma, T, Rate) - sigma * T ^ 0.5
+}
+
+function bs_Call_prc() {
+  let S = document.getElementById("S").value;
+  let X = document.getElementById("X").value;
+  let sigma = document.getElementById("sigma").value;
+  let T = document.getElementById("T").value;
+  let Rate = document.getElementById("Rate").value;
+
+  bs_Call_prc = S * bs_nd1(S, X, sigma, T, Rate) - X * Exp(-Rate * T) * bs_nd2(S, X, sigma, T, Rate)
 }
 </script>
 
