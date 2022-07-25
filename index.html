@@ -36,6 +36,12 @@ html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif;}
 .w3-third input{
   width: 80%;
 }
+.w3-twothird td {
+  width: 17rem;
+}
+#Call, #Put {
+  font-weight: bold;
+}
 </style>
 </head>
 <body>
@@ -74,23 +80,20 @@ html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif;}
       </thead>
       <tbody>
         <tr>
-            <td>Underlying Price</td><td><input type="number" id="S" value=100 oninput="bs_Call_prc()"></td>
+            <td>Underlying Price</td><td><input type="number" id="S" value=100 oninput="bs_prc()"></td>
         </tr>
         <tr>
-            <td>Exercise Price</td><td><input type="number" id="X" value=100 oninput="bs_Call_prc()"></td>
+            <td>Exercise Price</td><td><input type="number" id="X" value=100 oninput="bs_prc()"></td>
         </tr>
         <tr>
-            <td>Days</td><td><input type="number" id="T" value=30 oninput="bs_Call_prc()"></td>
+            <td>Days</td><td><input type="number" id="T" value=30 oninput="bs_prc()"></td>
         </tr>
         <tr>
-            <td>Volatility</td><td><input type="number" id="sigma" value=30 oninput="bs_Call_prc()"> %</td>
+            <td>Volatility</td><td><input type="number" id="sigma" value=30 oninput="bs_prc()"> %</td>
         </tr>
         <tr>
-            <td>Interest Rate</td><td><input type="number" id="Rate" value=5 oninput="bs_Call_prc()"> %</td>
-        </tr>
-        <tr>
-            <td>Call</td><td><input type="number" id="Call" onload="bs_Call_prc()" disabled></td>
-        </tr>     
+            <td>Interest Rate</td><td><input type="number" id="Rate" value=5 oninput="bs_prc()"> %</td>
+        </tr>  
       </tbody>
       </table>
     </div>
@@ -98,28 +101,13 @@ html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif;}
       <table>
       <thead>
         <tr>
-            <td colspan="2"><h2>Base Case Price</h2></td>
+          <td></td><td><h3>Call</h3></td><td><h3>Put</h3></td>
         </tr>
       </thead>
       <tbody>
         <tr>
-            <td>Underlying Price</td><td><input type="number" id="S" value=100 oninput="bs_Call_prc()"></td>
-        </tr>
-        <tr>
-            <td>Exercise Price</td><td><input type="number" id="X" value=100 oninput="bs_Call_prc()"></td>
-        </tr>
-        <tr>
-            <td>Time Until Expiration</td><td><input type="number" id="T" value=30 oninput="bs_Call_prc()"></td>
-        </tr>
-        <tr>
-            <td>Volatility</td><td><input type="number" id="sigma" value=30 oninput="bs_Call_prc()"> %</td>
-        </tr>
-        <tr>
-            <td>Interest Rate</td><td><input type="number" id="Rate" value=5 oninput="bs_Call_prc()"> %</td>
-        </tr>
-        <tr>
-            <td>Call</td><td><input type="number" id="Call" onload="bs_Call_prc()" disabled></td>
-        </tr>     
+            <td>Theoretical Price</td><td id="Call"></td><td id="Put"></td>
+        </tr>  
       </tbody>
       </table>
     </div>
@@ -217,17 +205,21 @@ function bs_nd2(S, X, sigma, T, Rate) {
     return NORMSDIST(bs_d1(S, X, sigma, T, Rate) - sigma * T**0.5);
 }
 
-function bs_Call_prc() {
+function bs_prc() {
   let S = document.getElementById("S").value;
   let X = document.getElementById("X").value;
   let sigma = document.getElementById("sigma").value / 100;
   let T = document.getElementById("T").value / 365;
   let Rate = document.getElementById("Rate").value / 100;
+
+  let Call = S*bs_nd1(S, X, sigma, T, Rate) - X*Math.exp(-Rate*T) * bs_nd2(S, X, sigma, T, Rate);
+  let Put = -S*(1 - bs_nd1(S, X, sigma, T, Rate)) + X*Math.exp(-Rate*T) * (1 - bs_nd2(S, X, sigma, T, Rate));
   
-  document.getElementById("Call").value = S*bs_nd1(S, X, sigma, T, Rate) - X*Math.exp(-Rate*T) * bs_nd2(S, X, sigma, T, Rate);
+  document.getElementById("Call").innerText = Call.toFixed(3);
+  document.getElementById("Put").innerText = Put.toFixed(3);
 }
 
-window.onload = bs_Call_prc();
+window.onload = bs_prc();
 </script>
 
 </body>
