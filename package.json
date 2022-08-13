@@ -1,5 +1,5 @@
 {
     "dependencies": {
-        "javascript-language-switcher": "chienhsiang-hung/javascript-language-switcher"
+        "javascript-language-switcher": "chienhsiang-hung/javascript-language-switcher#main"
     }
 }
