@@ -1,5 +1,5 @@
 {
     "dependencies": {
-        "javascript-language-switcher": "chienhsiang-hung/javascript-language-switcher#main"
+        "javascript-language-switcher": "https://github.com/chienhsiang-hung/javascript-language-switcher.git"
     }
 }
